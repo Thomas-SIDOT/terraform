@@ -7,40 +7,22 @@ terraform {
   }
 }
 
-variable "cont_image" {
-  type    = string
-  default = "nginx"
-}
-variable "cont_nb" {
-  type    = number
-  default = 4
-}
-variable "cont_mem" {
-  type    = number
-  default = 512
-}
-variable "cont_priv" {
-  type    = bool
-  default = false
-}
-
 
 provider "docker" {}
 
-resource "docker_image" "nginx" {
-  name         = "${var.cont_image}:latest"
-  keep_locally = false
+module "nginx-containers" {
+  source         = "./modules/nginx-containers"
+  cont_image = "nginx"
+  cont_mem = 512
+  cont_priv = false
+  cont_nb = 4
+  cont_port = 3000
 }
 
-resource "docker_container" "nginx" {
-  count = var.cont_nb
-  memory = var.cont_mem
-  image = docker_image.nginx.image_id
-  privileged = var.cont_priv
-  name  = "server_${count.index}"
-  ports {
-    internal = 80
-    external = 3000+count.index
-  }
+output "nginx_containers" {
+  value = module.nginx-containers.container_names
 }
 
+output "nginx_ports" {
+  value = module.nginx-containers.container_ports
+}
