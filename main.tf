@@ -37,10 +37,10 @@ resource "docker_container" "nginx" {
   memory = var.cont_mem
   image = docker_image.nginx.image_id
   privileged = var.cont_priv
-  name  = "tutorial"
+  name  = "server_${count.index}"
   ports {
     internal = 80
-    external = sum([3000],[count.index])
+    external = 3000+count.index
   }
 }
 
