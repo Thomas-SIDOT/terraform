@@ -18,6 +18,7 @@ resource "docker_container" "nginx" {
   image = docker_image.nginx.image_id
   privileged = var.cont_priv
   name  = "server_${count.index}"
+  
   ports {
     internal = 80
     external = var.cont_port+count.index
